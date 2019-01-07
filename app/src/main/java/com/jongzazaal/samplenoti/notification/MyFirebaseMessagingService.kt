@@ -36,10 +36,9 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         // If the application is in the foreground handle both data and notification messages here.
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
-        val notification = remoteMessage?.notification
         val data = NotificationData(remoteMessage!!.data)
         Log.d("tag2", "debug")
-        sendNotification(notification,data)
+        sendNotification(data)
     }
 
     /**
@@ -48,7 +47,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
      * @param notification FCM notification payload received.
      * @param data FCM data payload received.
      */
-    private fun sendNotification(notification: RemoteMessage.Notification?, data: NotificationData) {
+    private fun sendNotification(data: NotificationData) {
         val icon = BitmapFactory.decodeResource(resources, R.drawable.icon_app)
 
         val backIntent = Intent(this, MainActivity::class.java)
