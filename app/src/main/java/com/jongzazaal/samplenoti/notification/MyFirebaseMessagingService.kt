@@ -19,6 +19,9 @@ import com.jongzazaal.samplenoti.R
 import com.jongzazaal.samplenoti.TwoActivity
 import java.io.IOException
 import java.net.URL
+import android.os.SystemClock
+
+
 
 class MyFirebaseMessagingService: FirebaseMessagingService() {
     lateinit var intent:Intent
@@ -34,7 +37,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
         val notification = remoteMessage?.notification
-        val data = remoteMessage!!.data
+        val data = NotificationData(remoteMessage!!.data)
         Log.d("tag2", "debug")
         sendNotification(notification,data)
     }
@@ -45,22 +48,17 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
      * @param notification FCM notification payload received.
      * @param data FCM data payload received.
      */
-    private fun sendNotification(notification: RemoteMessage.Notification?, data: Map<String, String>) {
+    private fun sendNotification(notification: RemoteMessage.Notification?, data: NotificationData) {
         val icon = BitmapFactory.decodeResource(resources, R.drawable.icon_app)
 
-//        if(notification.clickAction )
         val backIntent = Intent(this, MainActivity::class.java)
         backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        when(data.get("click")){
+        when(data.click){
             "TWO_ACTIVITY" -> {
                 intent =  Intent(this, TwoActivity::class.java)
-                intent.putExtra("extra",data.get("extra"))
+                intent.putExtra("extra", data.extra)
             }
-//            "CHECK_ACTIVITY" -> {
-//                intent =  Intent(this, TwoActivity::class.java)
-//                intent.putExtra("extra",data.get("extra"))
-//                intent.putExtra("click_action",notification.clickAction)
-//            }
+
             else -> {
                 intent =  Intent(this, MainActivity::class.java)
             }
@@ -68,9 +66,9 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivities(this, 0, arrayOf(backIntent, intent), PendingIntent.FLAG_ONE_SHOT)
 //
-        val notificationBuilder = NotificationCompat.Builder(this, "my_channel_01")
-                .setContentTitle("title")
-                .setContentText("des")
+        val notificationBuilder = NotificationCompat.Builder(this, data.channel_id)
+                .setContentTitle(data.title)
+                .setContentText(data.des)
                 .setAutoCancel(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)
@@ -79,20 +77,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
                 .setDefaults(Notification.DEFAULT_VIBRATE)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setLargeIcon(icon)
-//
-//        val notificationBuilder = NotificationCompat.Builder(this, "channel_id")
-//                .setContentTitle(notification.title)
-//                .setContentText(notification.body)
-//                .setPriority(Notification.PRIORITY_HIGH)
-//                .setAutoCancel(true)
-//                .setLargeIcon(icon)
-//                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
 
-//        val contentIntent = PendingIntent.getActivity(this, 0,
-//                Intent(this, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT)
-
-
-//        notificationBuilder.setContentIntent(pendingIntent)
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             notificationBuilder.setSmallIcon(R.drawable.icon_app_three)
         }
@@ -101,7 +86,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         }
 
         try {
-            val picture_url = data["picture_url"]
+            val picture_url = data.picture_url
             if (picture_url != null && "" != picture_url) {
                 val url = URL(picture_url)
                 val bigPicture = BitmapFactory.decodeStream(url.openConnection().getInputStream())
@@ -119,19 +104,18 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         // Notification Channel is required for Android O and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                    "my_channel_01", "bbb", NotificationManager.IMPORTANCE_HIGH
+                    data.channel_id, data.channel_name, NotificationManager.IMPORTANCE_HIGH
             )
-            channel.description = "channel description"
+            channel.description = data.channel_des
             channel.setShowBadge(true)
-            channel.canShowBadge()
             channel.enableLights(true)
             channel.lightColor = Color.RED
             channel.enableVibration(true)
             channel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500)
             notificationManager.createNotificationChannel(channel)
         }
-
-        notificationManager.notify(0, notificationBuilder.build())
+        val oneTimeID = SystemClock.uptimeMillis().toInt()
+        notificationManager.notify(oneTimeID, notificationBuilder.build())
     }
 
 }
