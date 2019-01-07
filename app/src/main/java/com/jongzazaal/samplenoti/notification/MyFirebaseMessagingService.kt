@@ -100,18 +100,19 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             notificationBuilder.setSmallIcon(R.drawable.icon_app_two)
         }
 
-//        try {
-//            val picture_url = data["picture_url"]
-//            if (picture_url != null && "" != picture_url) {
-//                val url = URL(picture_url)
-//                val bigPicture = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+        try {
+            val picture_url = data["picture_url"]
+            if (picture_url != null && "" != picture_url) {
+                val url = URL(picture_url)
+                val bigPicture = BitmapFactory.decodeStream(url.openConnection().getInputStream())
 //                notificationBuilder.setStyle(
-//                        NotificationCompat.BigPictureStyle().bigPicture(bigPicture).setSummaryText(notification.body)
+//                        NotificationCompat.BigPictureStyle().bigPicture(bigPicture).setSummaryText("des2")
 //                )
-//            }
-//        } catch (e: IOException) {
-//            e.printStackTrace()
-//        }
+                notificationBuilder.setLargeIcon(bigPicture)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
