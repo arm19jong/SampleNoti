@@ -67,8 +67,8 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         val pendingIntent = PendingIntent.getActivities(this, 0, arrayOf(backIntent, intent), PendingIntent.FLAG_ONE_SHOT)
 //
         val notificationBuilder = NotificationCompat.Builder(this, data.channel_id)
-                .setContentTitle(data.title)
-                .setContentText(data.des)
+                .setContentTitle(data.title?:"sampleTitle")
+                .setContentText(data.des?:"sampleDes")
                 .setAutoCancel(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)
