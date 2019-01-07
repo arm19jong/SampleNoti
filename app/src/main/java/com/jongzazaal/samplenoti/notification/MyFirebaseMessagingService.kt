@@ -84,6 +84,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             notificationBuilder.setSmallIcon(R.drawable.icon_app_two)
         }
 
+
         try {
             val picture_url = data.picture_url
             if (picture_url != null && "" != picture_url) {
@@ -92,10 +93,13 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
 //                notificationBuilder.setStyle(
 //                        NotificationCompat.BigPictureStyle().bigPicture(bigPicture).setSummaryText(data.des)
 //                )
+
+                notificationBuilder.setLargeIcon(bigPicture)
+            }
+            else{
                 notificationBuilder.setStyle(
                         NotificationCompat.BigTextStyle().bigText(data.des)
                 )
-                notificationBuilder.setLargeIcon(bigPicture)
             }
         } catch (e: IOException) {
             e.printStackTrace()
