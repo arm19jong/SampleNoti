@@ -91,8 +91,11 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
                 val url = URL(picture_url)
                 val bigPicture = BitmapFactory.decodeStream(url.openConnection().getInputStream())
 //                notificationBuilder.setStyle(
-//                        NotificationCompat.BigPictureStyle().bigPicture(bigPicture).setSummaryText("des2")
+//                        NotificationCompat.BigPictureStyle().bigPicture(bigPicture).setSummaryText(data.des)
 //                )
+                notificationBuilder.setStyle(
+                        NotificationCompat.BigTextStyle().bigText(data.des)
+                )
                 notificationBuilder.setLargeIcon(bigPicture)
             }
         } catch (e: IOException) {

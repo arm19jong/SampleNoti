@@ -9,5 +9,5 @@ data class NotificationData(val map: Map<String?, Any?>) {
     val channel_des: String     by defaultMap
     val click: String           by defaultMap
     val extra: String           by defaultMap
-    val picture_url: String     by defaultMap
+    val picture_url: String?     by defaultMap
 }
